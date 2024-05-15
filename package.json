@@ -1,8 +1,8 @@
 {
-  "name": "vendure-plugin-fulfillment-dashboard",
+  "name": "vendure-fulfillment-plugin",
   "version": "1.2.0",
-  "repository": "git@github.com:dalyathan/vendure-plugin-fulfillment-dashboard.git",
-  "author": "Surafel Melese Tariku",
+  "repository": "https://github.com/thecooolemail/vendure-fulfillment-plugin.git",
+  "author": "thecoolemail",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
