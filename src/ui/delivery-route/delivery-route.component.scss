@@ -1,0 +1,29 @@
+
+table {
+    margin-top: 1em !important;
+    border-collapse: collapse;
+}
+
+
+
+vdr-order-state-label {
+    display: inline-block;
+    margin-top: 2px;
+}
+
+.flex{
+    margin-top: 1.5em !important;
+}
+
+.button-small.active {
+    background-color: var(--color-primary-200);
+    color: var(--color-primary-900);
+}
+
+.delivery-route-button{
+    margin-left: 15em !important;
+}
+
+td {
+    padding: 1em;
+}

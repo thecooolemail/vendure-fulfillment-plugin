@@ -1,0 +1,44 @@
+{
+  "name": "vendure-plugin-fulfillment-dashboard",
+  "version": "1.2.0",
+  "repository": "git@github.com:dalyathan/vendure-plugin-fulfillment-dashboard.git",
+  "author": "Surafel Melese Tariku",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "vendure-plugins",
+    "vendure-packages",
+    "vendure",
+    "nestjs",
+    "typescript",
+    "payment",
+    "graphql"
+  ],
+  "private": false,
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "scripts": {
+    "start": "yarn ts-node test/dev-server.ts",
+    "build": "rimraf dist && tsc && copyfiles -u 1 'src/ui/**/*' dist/",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@vendure/admin-ui": "^2.1.8",
+    "@vendure/admin-ui-plugin": "^2.1.8",
+    "@vendure/asset-server-plugin": "^2.1.8",
+    "@vendure/core": "^2.1.8",
+    "@vendure/email-plugin": "^2.1.8",
+    "@vendure/testing": "^2.1.8",
+    "@vendure/ui-devkit": "^2.1.8",
+    "axios": "1.6.8",
+    "copyfiles": "2.4.1",
+    "ts-node": "^10.9.1",
+    "typescript": "5.3.3"
+  }
+}
