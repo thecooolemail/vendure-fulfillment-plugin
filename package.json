@@ -1,10 +1,7 @@
 {
   "name": "vendure-fulfillment-plugin",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "repository": "https://github.com/thecooolemail/vendure-fulfillment-plugin.git",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@vendure-fulfillment-plugin"
-  },
   "author": "thecoolemail",
   "license": "MIT",
   "main": "dist/index.js",
