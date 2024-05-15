@@ -1,0 +1,11 @@
+/dist/
+/test/admin-ui/
+/static/
+node_modules
+__data__
+dump.rdb
+.swc
+data
+yarn-error.log
+__admin-ui
+.env
