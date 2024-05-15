@@ -1,6 +1,6 @@
 {
   "name": "vendure-fulfillment-plugin",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "repository": "git@github.com:thecooolemail/vendure-fulfillment-plugin.git",
   "author": "thecoolemail",
   "license": "MIT",
@@ -16,6 +16,10 @@
     "graphql"
   ],
   "private": false,
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "engines": {
     "node": ">=16.0.0"
   },
