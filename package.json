@@ -1,6 +1,6 @@
 {
   "name": "vendure-fulfillment-plugin",
-  "version": "1.2.9",
+  "version": "1.2.6",
   "repository": "git@github.com:thecooolemail/vendure-fulfillment-plugin.git",
   "author": "thecoolemail",
   "license": "MIT",
@@ -25,23 +25,25 @@
   },
   "scripts": {
     "start": "yarn ts-node test/dev-server.ts",
-    "clean": "rimraf dist",
-    "compile": "tsc",
-    "copy-ui": "copyfiles -u 1 'src/ui/**/*' dist/",
-    "build": "npm run clean && npm run compile && npm run copy-ui",
+    "build": "rimraf dist && tsc && copyfiles -u 1 'src/ui/**/*' dist/",
     "test": "vitest run"
   },
   "devDependencies": {
-    "@vendure/admin-ui": "2.1.8",
-    "@vendure/admin-ui-plugin": "2.1.8",
-    "@vendure/asset-server-plugin": "2.1.8",
-    "@vendure/core": "2.1.8",
-    "@vendure/email-plugin": "2.1.8",
-    "@vendure/testing": "2.1.8",
-    "@vendure/ui-devkit": "2.1.8",
+    "@vendure/admin-ui": "^2.1.8",
+    "@vendure/admin-ui-plugin": "^2.1.8",
+    "@vendure/asset-server-plugin": "^2.1.8",
+    "@vendure/core": "^2.1.8",
+    "@vendure/email-plugin": "^2.1.8",
+    "@vendure/testing": "^2.1.8",
+    "@vendure/ui-devkit": "^2.1.8",
     "axios": "1.6.8",
     "copyfiles": "2.4.1",
-    "rimraf": "3.0.2",
-    "ts-node": "10.9.1"
+    "ts-node": "^10.9.1",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@angular/platform-browser": "^17.3.9",
+    "@angular/router": "^17.3.9",
+    "apollo-angular": "^7.0.1"
   }
 }
