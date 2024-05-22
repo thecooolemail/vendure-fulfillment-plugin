@@ -8461,10 +8461,10 @@ ts-node@^10.7.0, ts-node@^10.9.1:
     v8-compile-cache-lib "^3.0.1"
     yn "3.1.1"
 
-tsc@^1.20150623.0:
-  version "1.20150623.0"
-  resolved "https://registry.npmjs.org/tsc/-/tsc-1.20150623.0.tgz"
-  integrity sha512-35dAbChm97r03rxlfPwkFrrI8WoFlrqtbskmxomtnso2fOSKWDLt3TitT2ZNHl5hQF1Su9S9w/vjmoXf5W0VWA==
+tsc@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.npmjs.org/tsc/-/tsc-2.0.4.tgz"
+  integrity sha512-fzoSieZI5KKJVBYGvwbVZs/J5za84f2lSTLPYf6AGiIf43tZ3GNrI1QzTLcjtyDDP4aLxd46RTZq1nQxe7+k5Q==
 
 tslib@^1.9.0:
   version "1.14.1"
