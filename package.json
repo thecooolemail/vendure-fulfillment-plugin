@@ -25,22 +25,23 @@
   },
   "scripts": {
     "start": "yarn ts-node test/dev-server.ts",
-    "build": "rimraf dist && tsc && copyfiles -u 1 'src/ui/**/*' dist/",
+    "clean": "rimraf dist",
+    "compile": "tsc",
+    "copy-ui": "copyfiles -u 1 'src/ui/**/*' dist/",
+    "build": "npm run clean && npm run compile && npm run copy-ui",
     "test": "vitest run"
   },
   "devDependencies": {
-    "@vendure/admin-ui": "^2.1.8",
-    "@vendure/admin-ui-plugin": "^2.1.8",
-    "@vendure/asset-server-plugin": "^2.1.8",
-    "@vendure/core": "^2.1.8",
-    "@vendure/email-plugin": "^2.1.8",
-    "@vendure/testing": "^2.1.8",
-    "@vendure/ui-devkit": "^2.1.8",
+    "@vendure/admin-ui": "2.1.8",
+    "@vendure/admin-ui-plugin": "2.1.8",
+    "@vendure/asset-server-plugin": "2.1.8",
+    "@vendure/core": "2.1.8",
+    "@vendure/email-plugin": "2.1.8",
+    "@vendure/testing": "2.1.8",
+    "@vendure/ui-devkit": "2.1.8",
     "axios": "1.6.8",
     "copyfiles": "2.4.1",
-    "rimraf": "^3.0.2",
-    "ts-node": "^10.9.1",
-    "tsc": "^2.0.4",
-    "typescript": "^5.4.5"
+    "rimraf": "3.0.2",
+    "ts-node": "10.9.1"
   }
 }
