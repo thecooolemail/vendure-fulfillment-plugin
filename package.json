@@ -1,8 +1,8 @@
 {
   "name": "vendure-fulfillment-plugin",
   "version": "1.2.9",
-  "repository": "git@github.com:thecooolemail/vendure-fulfillment-plugin.git",
   "author": "thecoolemail",
+  "repository": "git@github.com:thecooolemail/vendure-fulfillment-plugin.git",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,29 +21,37 @@
     "README.md"
   ],
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=20.0.0"
   },
   "scripts": {
-    "start": "yarn ts-node test/dev-server.ts",
-    "build": "rimraf dist && tsc && copyfiles -u 1 'src/ui/**/*' dist/",
-    "test": "vitest run"
+    "start": "ts-node test/dev-server.ts",
+    "build": "rimraf dist && tsc && cp -r src/ui dist/",
+    "test": "vitest",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "devDependencies": {
-    "@vendure/admin-ui": "^2.1.8",
-    "@vendure/admin-ui-plugin": "^2.1.8",
-    "@vendure/asset-server-plugin": "^2.1.8",
-    "@vendure/core": "^2.1.8",
-    "@vendure/email-plugin": "^2.1.8",
-    "@vendure/testing": "^2.1.8",
-    "@vendure/ui-devkit": "^2.1.8",
-    "axios": "1.6.8",
-    "copyfiles": "2.4.1",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.4.5"
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/client-preset": "^4.3.3",
+    "@graphql-codegen/typescript": "^4.0.9",
+    "@swc/core": "^1.7.1",
+    "@vendure/admin-ui-plugin": "3.0.5",
+    "@vendure/asset-server-plugin": "3.0.5",
+    "@vendure/cli": "^3.0.0",
+    "@vendure/core": "3.0.5",
+    "@vendure/testing": "3.0.5",
+    "@vendure/ui-devkit": "3.0.5",
+    "graphql-tag": "^2.12.6",
+    "pg": "^8.12.0",
+    "prettier": "3.3.3",
+    "rimraf": "^6.0.1",
+    "ts-node": "10.9.2",
+    "typescript": "^5.4.5",
+    "unplugin-swc": "^1.5.1",
+    "vitest": "^2.0.4"
   },
+  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72",
   "dependencies": {
-    "@angular/platform-browser": "^17.3.9",
-    "@angular/router": "^17.3.9",
-    "apollo-angular": "^7.0.1"
+    "axios": "^1.7.7",
+    "sharp": "^0.33.4"
   }
 }

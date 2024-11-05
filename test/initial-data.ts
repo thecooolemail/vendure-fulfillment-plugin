@@ -22,7 +22,6 @@ export const initialData: InitialData = {
     { name: 'United Kingdom', code: 'GB', zone: 'Europe' },
     { name: 'United States of America', code: 'US', zone: 'Americas' },
     { name: 'Nederland', code: 'NL', zone: 'Europe' },
-    { name: 'Belgie', code: 'BE', zone: 'Europe' },
   ],
   collections: [
     {
@@ -31,15 +30,6 @@ export const initialData: InitialData = {
         {
           code: 'facet-value-filter',
           args: { facetValueNames: ['computers'], containsAny: false },
-        },
-      ],
-    },
-    {
-      name: 'Electronics',
-      filters: [
-        {
-          code: 'facet-value-filter',
-          args: { facetValueNames: ['electronics'], containsAny: false },
         },
       ],
     },

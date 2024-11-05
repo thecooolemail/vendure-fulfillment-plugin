@@ -4,18 +4,13 @@
 
 ## Getting Started
 
-1. And then add this to your  `vendure-config.ts`.
+1. And then add this to your `vendure-config.ts`.
+
 ```ts
-import {VendureFulfillmentsDashboardPlugin} from "vendure-plugin-fulfillment-dashboard";
+import { VendureFulfillmentsDashboardPlugin } from 'vendure-plugin-fulfillment-dashboard';
 
-plugins:[
-  VendureFulfillmentsDashboardPlugin
-
-]
-
+plugins: [VendureFulfillmentsDashboardPlugin];
 ```
+
 2. Make sure to run database migrations after updating your `vendure-config.ts`
 3. Make sure your google api key is in .env file with the key `API_KEY`
-
-
-
