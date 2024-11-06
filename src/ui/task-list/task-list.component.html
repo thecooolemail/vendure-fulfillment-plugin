@@ -2,7 +2,9 @@
   <table>
     <tbody>
       <tr *ngFor="let task of tasks$ | async">
-        <td [innerHTML]="sanitizer.bypassSecurityTrustHtml(task?.taskName)"></td>
+        <td
+          [innerHTML]="sanitizer.bypassSecurityTrustHtml(task?.taskName)"
+        ></td>
         <td class="chip-class">
           <vdr-chip [colorType]="task.colorType">
             {{ task?.tag }}

@@ -1,34 +1,63 @@
 import { OrderProcess } from '@vendure/core';
 
 export const Fulfill: OrderProcess<
-  | 'prepared'
-  | 'readyfordelivery'
   | 'outfordelivery'
-  | 'Delivered'
   | 'partialrefund'
-  | 'reschedule'
+  | 'reschedulecollection'
+  | 'rescheduledelivery'
   | 'readyforcollection'
   | 'collected'
+  | 'refund'
+  | 'itemsrejected'
+  | 'notdelivered'
+  | 'itemsreplaced'
+  | 'orderdelivered'
+  | 'readyfordelivery'
   | 'notcollected'
 > = {
   transitions: {
-    prepared: { to: ['readyfordelivery', 'readyforcollection'], mergeStrategy: 'replace' },
-    readyforcollection: { to: ['collected', 'notcollected'], mergeStrategy: 'replace' },
-    collected: { to: ['Delivered'], mergeStrategy: 'replace' },
-    notcollected: { to: [], mergeStrategy: 'replace' },
-    readyfordelivery: { to: ['outfordelivery'], mergeStrategy: 'replace' },
-    outfordelivery: { to: ['Delivered', 'reschedule'], mergeStrategy: 'replace' },
-    Delivered: { to: ['partialrefund'], mergeStrategy: 'replace' },
+    readyforcollection: {
+      to: ['collected', 'notcollected', 'itemsrejected', 'reschedulecollection'],
+      mergeStrategy: 'replace',
+    },
+    reschedulecollection: {
+      to: ['collected', 'notcollected'],
+      mergeStrategy: 'replace',
+    },
+    collected: { to: ['partialrefund'], mergeStrategy: 'replace' },
+    notcollected: {
+      to: ['reschedulecollection', 'itemsreplaced', 'refund'],
+      mergeStrategy: 'replace',
+    },
+    itemsreplaced: { to: ['refund'], mergeStrategy: 'replace' },
+    readyfordelivery: {
+      to: ['outfordelivery', 'itemsrejected'],
+      mergeStrategy: 'replace',
+    },
+    outfordelivery: {
+      to: ['orderdelivered', 'rescheduledelivery', 'notdelivered'],
+      mergeStrategy: 'replace',
+    },
+    notdelivered: {
+      to: ['rescheduledelivery', 'itemsreplaced', 'refund'],
+      mergeStrategy: 'replace',
+    },
+    refund: { to: ['Cancelled'], mergeStrategy: 'replace' },
+    Cancelled: { to: [], mergeStrategy: 'replace' },
+    orderdelivered: { to: ['partialrefund'], mergeStrategy: 'replace' },
     partialrefund: { to: [], mergeStrategy: 'replace' },
-    reschedule: { to: [], mergeStrategy: 'replace' },
+    rescheduledelivery: { to: ['readyfordelivery'], mergeStrategy: 'replace' },
+    itemsrejected: {
+      to: ['readyforcollection', 'readyfordelivery'],
+      mergeStrategy: 'replace',
+    },
   },
 };
 
-export const Preparations: OrderProcess<'awaitingprep' | 'preparing' | 'prepared'> = {
+export const Preparations: OrderProcess<'awaitingprep' | 'preparing'> = {
   transitions: {
     PaymentSettled: { to: ['awaitingprep'], mergeStrategy: 'replace' },
     awaitingprep: { to: ['Cancelled', 'preparing'], mergeStrategy: 'replace' },
-    preparing: { to: ['prepared'], mergeStrategy: 'replace' },
-    prepared: { to: [], mergeStrategy: 'replace' },
+    preparing: { to: [], mergeStrategy: 'replace' },
   },
 };

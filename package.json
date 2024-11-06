@@ -51,7 +51,9 @@
   },
   "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72",
   "dependencies": {
+    "@vendure/email-plugin": "^3.0.5",
     "axios": "^1.7.7",
-    "sharp": "^0.33.4"
+    "sharp": "^0.33.4",
+    "vendure-substitution-plugin": "^1.2.2"
   }
 }
