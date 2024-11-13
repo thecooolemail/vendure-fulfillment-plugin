@@ -8,32 +8,29 @@ export const Fulfill: OrderProcess<
   | 'readyforcollection'
   | 'collected'
   | 'refund'
-  | 'itemsrejected'
   | 'notdelivered'
-  | 'itemsreplaced'
-  | 'orderdelivered'
-  | 'readyfordelivery'
   | 'notcollected'
 > = {
   transitions: {
     readyforcollection: {
-      to: ['collected', 'notcollected', 'itemsrejected', 'reschedulecollection'],
+      to: [
+        'collected',
+        'notcollected',
+        'itemsrejected',
+        'reschedulecollection',
+      ],
       mergeStrategy: 'replace',
     },
     reschedulecollection: {
       to: ['collected', 'notcollected'],
       mergeStrategy: 'replace',
     },
-    collected: { to: ['partialrefund'], mergeStrategy: 'replace' },
+    collected: { to: [], mergeStrategy: 'replace' },
     notcollected: {
       to: ['reschedulecollection', 'itemsreplaced', 'refund'],
       mergeStrategy: 'replace',
     },
     itemsreplaced: { to: ['refund'], mergeStrategy: 'replace' },
-    readyfordelivery: {
-      to: ['outfordelivery', 'itemsrejected'],
-      mergeStrategy: 'replace',
-    },
     outfordelivery: {
       to: ['orderdelivered', 'rescheduledelivery', 'notdelivered'],
       mergeStrategy: 'replace',
@@ -44,13 +41,9 @@ export const Fulfill: OrderProcess<
     },
     refund: { to: ['Cancelled'], mergeStrategy: 'replace' },
     Cancelled: { to: [], mergeStrategy: 'replace' },
+    rescheduledelivery: { to: ['outfordelivery'], mergeStrategy: 'replace' },
     orderdelivered: { to: ['partialrefund'], mergeStrategy: 'replace' },
     partialrefund: { to: [], mergeStrategy: 'replace' },
-    rescheduledelivery: { to: ['readyfordelivery'], mergeStrategy: 'replace' },
-    itemsrejected: {
-      to: ['readyforcollection', 'readyfordelivery'],
-      mergeStrategy: 'replace',
-    },
   },
 };
 

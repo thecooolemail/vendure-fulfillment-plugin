@@ -10,7 +10,6 @@ import {
 import { LessThanOrEqual, Not, In, Between, FindOperator } from 'typeorm';
 import dayjs from 'dayjs';
 import { TaskMessage } from '../types';
-
 import { SubstitutionStates } from 'vendure-substitution-plugin';
 
 export const SHOULD_CLEAR_KEY = 'shouldClearCachedDeliveryRoute';
@@ -20,7 +19,7 @@ export class TasksService {
   constructor(
     private conn: TransactionalConnection,
     private eventBus: EventBus,
-    private orderService: OrderService,
+    private orderService: OrderService
   ) {}
 
   async getTasks(ctx: RequestContext): Promise<TaskMessage[]> {
@@ -67,10 +66,10 @@ export class TasksService {
     const orders = await this.getFilteredOrders(
       ctx,
       Between(tomorrowStartOfDay, tomorrowEndOfDay),
-      In(['awaitingprep', 'preparing']),
+      In(['awaitingprep', 'preparing'])
     );
 
-    return orders.map(order => ({
+    return orders.map((order) => ({
       taskName: `Prepare ${this.getLink(order)} for tomorrow`,
       tag: 'Low Priority',
       orderId: order.id,
@@ -86,10 +85,10 @@ export class TasksService {
     const orders = await this.getFilteredOrders(
       ctx,
       Between(todayStartOfDay, todayEndOfDay),
-      In(['awaitingprep', 'preparing']),
+      In(['awaitingprep', 'preparing'])
     );
 
-    return orders.map(order => ({
+    return orders.map((order) => ({
       taskName: `Prepare ${this.getLink(order)} for today`,
       tag: 'High Priority',
       orderId: order.id,
@@ -107,16 +106,18 @@ export class TasksService {
   // ready for collection
   //
   // readyforcollection && collection date === today
-  async getReadyForCollectionOrders(ctx: RequestContext): Promise<TaskMessage[]> {
+  async getReadyForCollectionOrders(
+    ctx: RequestContext
+  ): Promise<TaskMessage[]> {
     const todayStartOfDay = dayjs().startOf('day').toDate();
     const todayEndOfDay = dayjs().endOf('day').toDate();
     const orders = await this.getFilteredOrders(
       ctx,
       Between(todayStartOfDay, todayEndOfDay),
-      'readyforcollection',
+      'readyforcollection'
     );
 
-    return orders.map(order => ({
+    return orders.map((order) => ({
       taskName: `${this.getLink(order)} will be collected today`,
       tag: 'Low Priority',
       orderId: order.id,
@@ -131,7 +132,7 @@ export class TasksService {
     const orders = await this.getFilteredOrders(
       ctx,
       LessThanOrEqual(dayjs().subtract(1, 'days').toDate()),
-      'readyforcollection',
+      'readyforcollection'
     );
 
     for (const order of orders) {
@@ -143,9 +144,13 @@ export class TasksService {
   // no collection
   //
   async getNoCollectionOrders(ctx: RequestContext): Promise<TaskMessage[]> {
-    const orders = await this.getFilteredOrders(ctx, LessThanOrEqual(dayjs().toDate()), 'notcollected');
+    const orders = await this.getFilteredOrders(
+      ctx,
+      LessThanOrEqual(dayjs().toDate()),
+      'notcollected'
+    );
 
-    return orders.map(order => ({
+    return orders.map((order) => ({
       taskName: `Call Customer and Reschedule ${this.getLink(order)} collection,  Change state to refund and refund order if can't contact customer`,
       tag: 'High Priority',
       orderId: order.id,
@@ -160,9 +165,14 @@ export class TasksService {
   //
   // notdelivered
   async getFailedDeliveredOrders(ctx: RequestContext): Promise<TaskMessage[]> {
-    const orders = await this.getFilteredOrders(ctx, LessThanOrEqual(dayjs().toDate()), 'notdelivered', true);
+    const orders = await this.getFilteredOrders(
+      ctx,
+      LessThanOrEqual(dayjs().toDate()),
+      'notdelivered',
+      true
+    );
 
-    return orders.map(order => ({
+    return orders.map((order) => ({
       taskName: `Call Customer and Reschedule ${this.getLink(order)} delivery, Change state to refund and refund order if can't contact customer`,
       tag: 'High Priority',
       orderId: order.id,
@@ -175,17 +185,19 @@ export class TasksService {
   //
   // ready for delivery
   //
-  async getPreparedAndNotOutForDeliveryForToday(ctx: RequestContext): Promise<TaskMessage[]> {
+  async getPreparedAndNotOutForDeliveryForToday(
+    ctx: RequestContext
+  ): Promise<TaskMessage[]> {
     const todayStartOfDay = dayjs().startOf('day').toDate();
     const todayEndOfDay = dayjs().endOf('day').toDate();
     const orders = await this.getFilteredOrders(
       ctx,
       Between(todayStartOfDay, todayEndOfDay),
       In(['readyfordelivery', 'prepared']),
-      true,
+      true
     );
 
-    return orders.map(order => ({
+    return orders.map((order) => ({
       taskName: `Send ${this.getLink(order)} out for delivery`,
       tag: 'Medium Priority',
       orderId: order.id,
@@ -201,10 +213,10 @@ export class TasksService {
       ctx,
       LessThanOrEqual(dayjs().subtract(1, 'days').toDate()),
       'readyfordelivery',
-      true,
+      true
     );
 
-    return orders.map(order => ({
+    return orders.map((order) => ({
       taskName: `${this.getLink(order)} passed delivery date, Reschedule delivery`,
       tag: 'High Priority',
       orderId: order.id,
@@ -217,17 +229,19 @@ export class TasksService {
   //
   // out for delivery
   //
-  async getAnyOutForDeliveryForToday(ctx: RequestContext): Promise<TaskMessage[]> {
+  async getAnyOutForDeliveryForToday(
+    ctx: RequestContext
+  ): Promise<TaskMessage[]> {
     const todayStartOfDay = dayjs().startOf('day').toDate();
     const todayEndOfDay = dayjs().endOf('day').toDate();
     const orders = await this.getFilteredOrders(
       ctx,
       Between(todayStartOfDay, todayEndOfDay),
       'outfordelivery',
-      true,
+      true
     );
 
-    return orders.map(order => ({
+    return orders.map((order) => ({
       taskName: `Finish delivery ${this.getLink(order)}`,
       tag: 'In Progress',
       orderId: order.id,
@@ -240,22 +254,26 @@ export class TasksService {
   //
   // items rejected collection
   //
-  async getItemsRejectedCollectionOrders(ctx: RequestContext): Promise<TaskMessage[]> {
+  async getItemsRejectedCollectionOrders(
+    ctx: RequestContext
+  ): Promise<TaskMessage[]> {
     const todayStartOfDay = dayjs().startOf('day').toDate();
     const todayEndOfDay = dayjs().endOf('day').toDate();
     const orders = await this.getFilteredOrders(
       ctx,
       Between(todayStartOfDay, todayEndOfDay),
-      'itemsrejected',
+      'itemsrejected'
     );
 
-    const orderWithRejectedItems = orders.filter(order => {
-      return order.lines.some(line => {
-        return line.customFields?.substitutionState === SubstitutionStates.REJECTED;
+    const orderWithRejectedItems = orders.filter((order) => {
+      return order.lines.some((line) => {
+        return (
+          line.customFields?.substitutionState === SubstitutionStates.REJECTED
+        );
       });
     });
 
-    return orderWithRejectedItems.map(order => ({
+    return orderWithRejectedItems.map((order) => ({
       taskName: `Order ${this.getLink(order)} substitution items rejected, place items back and make ready for collection / delivery`,
       tag: 'Medium Priority',
       orderId: order.id,
@@ -273,17 +291,19 @@ export class TasksService {
   // rescheduled delivery
   //
   // if rescheduled and delivery date === today
-  async getRescheduledDeliveryOrders(ctx: RequestContext): Promise<TaskMessage[]> {
+  async getRescheduledDeliveryOrders(
+    ctx: RequestContext
+  ): Promise<TaskMessage[]> {
     const todayStartOfDay = dayjs().startOf('day').toDate();
     const todayEndOfDay = dayjs().endOf('day').toDate();
     const orders = await this.getFilteredOrders(
       ctx,
       Between(todayStartOfDay, todayEndOfDay),
       'rescheduledelivery',
-      true,
+      true
     );
 
-    return orders.map(order => ({
+    return orders.map((order) => ({
       taskName: `Send rescheduled ${this.getLink(order)} out for delivery`,
       tag: 'Medium Priority',
       orderId: order.id,
@@ -297,16 +317,18 @@ export class TasksService {
   // rescheduled collection
   //
   // if rescheduled and collection date === today
-  async getRescheduledCollectionOrders(ctx: RequestContext): Promise<TaskMessage[]> {
+  async getRescheduledCollectionOrders(
+    ctx: RequestContext
+  ): Promise<TaskMessage[]> {
     const todayStartOfDay = dayjs().startOf('day').toDate();
     const todayEndOfDay = dayjs().endOf('day').toDate();
     const orders = await this.getFilteredOrders(
       ctx,
       Between(todayStartOfDay, todayEndOfDay),
-      'reschedulecollection',
+      'reschedulecollection'
     );
 
-    return orders.map(order => ({
+    return orders.map((order) => ({
       taskName: `Reschedule ${this.getLink(order)} will be collected today`,
       tag: 'Medium Priority',
       orderId: order.id,
@@ -321,10 +343,10 @@ export class TasksService {
     const orders = await this.getFilteredOrders(
       ctx,
       LessThanOrEqual(dayjs().subtract(2, 'days').toDate()),
-      'reschedulecollection',
+      'reschedulecollection'
     );
 
-    return orders.map(order => ({
+    return orders.map((order) => ({
       taskName: `Order ${this.getLink(order)} not collected, place items back and change order to no collection`,
       tag: 'Medium Priority',
       orderId: order.id,
@@ -337,20 +359,24 @@ export class TasksService {
   //
   // delivered
   //
-  async getSubItemRejectedDeliveredOrders(ctx: RequestContext): Promise<TaskMessage[]> {
+  async getSubItemRejectedDeliveredOrders(
+    ctx: RequestContext
+  ): Promise<TaskMessage[]> {
     const orders = await this.getFilteredOrders(
       ctx,
-      LessThanOrEqual(dayjs().toDate()),
-      In(['orderdelivered', 'collected']),
+      LessThanOrEqual(dayjs().endOf('day').toDate()),
+      In(['orderdelivered', 'collected'])
     );
 
-    const orderWithRemovedItems = orders.filter(order => {
-      return order.lines.some(line => {
-        return line.customFields?.substitutionState === SubstitutionStates.REMOVED;
+    const orderWithRemovedItems = orders.filter((order) => {
+      return order.lines.some((line) => {
+        return (
+          line.customFields?.substitutionState === SubstitutionStates.REMOVED
+        );
       });
     });
 
-    return orderWithRemovedItems.map(order => ({
+    return orderWithRemovedItems.map((order) => ({
       taskName: `Refund Sub Items ${this.getLink(order)} and change state to Items Refunded`,
       tag: 'Low Priority',
       orderId: order.id,
@@ -382,7 +408,7 @@ export class TasksService {
     ctx: RequestContext,
     dateFilter: FindOperator<Date>,
     stateFilter: FindOperator<String> | string,
-    isDelivery?: boolean,
+    isDelivery?: boolean
   ) {
     return await this.conn
       .getRepository(ctx, Order)
@@ -420,7 +446,10 @@ export class TasksService {
   }
 
   private getLink(order: Order) {
-    const link = order.state === 'Draft' ? `/admin/orders/draft/${order.id}` : `/admin/orders/${order.id}`;
+    const link =
+      order.state === 'Draft'
+        ? `/admin/orders/draft/${order.id}`
+        : `/admin/orders/${order.id}`;
     return `<a class="button-ghost" href="${link}" ng-reflect-router-link="./orders,${order.id}" _ngcontent-ng-c518184086>
                     <span>${order.code}</span>
                     <clr-icon shape="arrow right" role="none">
