@@ -53,7 +53,6 @@
   "dependencies": {
     "@vendure/email-plugin": "^3.0.5",
     "axios": "^1.7.7",
-    "sharp": "^0.33.4",
-    "vendure-substitution-plugin": "^1.2.3"
+    "sharp": "^0.33.4"
   }
 }

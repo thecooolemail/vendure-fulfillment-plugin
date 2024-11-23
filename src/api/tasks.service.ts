@@ -7,10 +7,10 @@ import {
   TransactionalConnection,
   OrderState,
 } from '@vendure/core';
-import { LessThanOrEqual, Not, In, Between, FindOperator } from 'typeorm';
+import { LessThanOrEqual /*, Not */, In, Between, FindOperator } from 'typeorm';
 import dayjs from 'dayjs';
 import { TaskMessage } from '../types';
-import { SubstitutionStates } from 'vendure-substitution-plugin';
+// import { SubstitutionStates } from 'vendure-substitution-plugin';
 
 export const SHOULD_CLEAR_KEY = 'shouldClearCachedDeliveryRoute';
 
@@ -42,14 +42,14 @@ export class TasksService {
       ...(await this.getRescheduledDeliveryOrders(ctx)),
       ...(await this.getPreparedAndNotOutForDeliveryForToday(ctx)),
       ...(await this.getRescheduledOrders(ctx)),
-      ...(await this.getItemsRejectedCollectionOrders(ctx)),
+      // ...(await this.getItemsRejectedCollectionOrders(ctx)),
 
       // Then low priority tasks
       ...(await this.getReadyForCollectionOrders(ctx)),
       ...(await this.getNotPreparedForTomorrow(ctx)),
       ...(await this.getRescheduledCollectionOrders(ctx)),
       ...(await this.getReadyForCollectionOrders(ctx)),
-      ...(await this.getSubItemRejectedDeliveredOrders(ctx)),
+      // ...(await this.getSubItemRejectedDeliveredOrders(ctx)),
 
       // Others
       ...(await this.getAnyOutForDeliveryForToday(ctx)),
@@ -254,34 +254,34 @@ export class TasksService {
   //
   // items rejected collection
   //
-  async getItemsRejectedCollectionOrders(
-    ctx: RequestContext
-  ): Promise<TaskMessage[]> {
-    const todayStartOfDay = dayjs().startOf('day').toDate();
-    const todayEndOfDay = dayjs().endOf('day').toDate();
-    const orders = await this.getFilteredOrders(
-      ctx,
-      Between(todayStartOfDay, todayEndOfDay),
-      'itemsrejected'
-    );
+  // async getItemsRejectedCollectionOrders(
+  //   ctx: RequestContext
+  // ): Promise<TaskMessage[]> {
+  //   const todayStartOfDay = dayjs().startOf('day').toDate();
+  //   const todayEndOfDay = dayjs().endOf('day').toDate();
+  //   const orders = await this.getFilteredOrders(
+  //     ctx,
+  //     Between(todayStartOfDay, todayEndOfDay),
+  //     'itemsrejected'
+  //   );
 
-    const orderWithRejectedItems = orders.filter((order) => {
-      return order.lines.some((line) => {
-        return (
-          line.customFields?.substitutionState === SubstitutionStates.REJECTED
-        );
-      });
-    });
+  //   const orderWithRejectedItems = orders.filter((order) => {
+  //     return order.lines.some((line) => {
+  //       return (
+  //         line.customFields?.substitutionState === SubstitutionStates.REJECTED
+  //       );
+  //     });
+  //   });
 
-    return orderWithRejectedItems.map((order) => ({
-      taskName: `Order ${this.getLink(order)} substitution items rejected, place items back and make ready for collection / delivery`,
-      tag: 'Medium Priority',
-      orderId: order.id,
-      state: order.state,
-      code: order.code,
-      colorType: 'error',
-    }));
-  }
+  //   return orderWithRejectedItems.map((order) => ({
+  //     taskName: `Order ${this.getLink(order)} substitution items rejected, place items back and make ready for collection / delivery`,
+  //     tag: 'Medium Priority',
+  //     orderId: order.id,
+  //     state: order.state,
+  //     code: order.code,
+  //     colorType: 'error',
+  //   }));
+  // }
 
   //
   // items rejected delivery
@@ -359,32 +359,32 @@ export class TasksService {
   //
   // delivered
   //
-  async getSubItemRejectedDeliveredOrders(
-    ctx: RequestContext
-  ): Promise<TaskMessage[]> {
-    const orders = await this.getFilteredOrders(
-      ctx,
-      LessThanOrEqual(dayjs().endOf('day').toDate()),
-      In(['orderdelivered', 'collected'])
-    );
+  // async getSubItemRejectedDeliveredOrders(
+  //   ctx: RequestContext
+  // ): Promise<TaskMessage[]> {
+  //   const orders = await this.getFilteredOrders(
+  //     ctx,
+  //     LessThanOrEqual(dayjs().endOf('day').toDate()),
+  //     In(['orderdelivered', 'collected'])
+  //   );
 
-    const orderWithRemovedItems = orders.filter((order) => {
-      return order.lines.some((line) => {
-        return (
-          line.customFields?.substitutionState === SubstitutionStates.REMOVED
-        );
-      });
-    });
+  //   const orderWithRemovedItems = orders.filter((order) => {
+  //     return order.lines.some((line) => {
+  //       return (
+  //         line.customFields?.substitutionState === SubstitutionStates.REMOVED
+  //       );
+  //     });
+  //   });
 
-    return orderWithRemovedItems.map((order) => ({
-      taskName: `Refund Sub Items ${this.getLink(order)} and change state to Items Refunded`,
-      tag: 'Low Priority',
-      orderId: order.id,
-      state: order.state,
-      code: order.code,
-      colorType: 'success',
-    }));
-  }
+  //   return orderWithRemovedItems.map((order) => ({
+  //     taskName: `Refund Sub Items ${this.getLink(order)} and change state to Items Refunded`,
+  //     tag: 'Low Priority',
+  //     orderId: order.id,
+  //     state: order.state,
+  //     code: order.code,
+  //     colorType: 'success',
+  //   }));
+  // }
 
   // async getNotCollectedOrders(ctx: RequestContext): Promise<TaskMessage[]> {
   //   const orders = await this.getFilteredOrders(
