@@ -2,79 +2,64 @@ import { OrderProcess, OrderState } from '@vendure/core';
 
 declare module '@vendure/core' {
   interface CustomOrderStates {
-    awaitingprep: OrderState;
-    preparing: OrderState;
-    readyfordelivery: OrderState;
-    outfordelivery: OrderState;
-    orderdelivered: OrderState;
-    partialrefund: OrderState;
-    reschedule: OrderState;
-    readyforcollection: OrderState;
-    collected: OrderState;
-    notcollected: OrderState;
-    itemsreplaced: OrderState;
-    itemsrejected: OrderState; // New state for rejected items
+    AwaitingPrep: OrderState;
+    Preparing: OrderState;
+    ReadyForDelivery: OrderState;
+    OutForDelivery: OrderState;
+    CouldNotDeliver: OrderState;
+    Delivered: OrderState;
+    ReadyForCollection: OrderState;
+    Collected: OrderState;
+    NoCollection: OrderState;
+    PartialRefund: OrderState;
   }
 }
 
 export const PreparationsProcess: OrderProcess<
-  | 'awaitingprep'
-  | 'preparing'
-  | 'readyfordelivery'
-  | 'outfordelivery'
-  | 'orderdelivered'
-  | 'partialrefund'
-  | 'rescheduledelivery'
-  | 'notdelivered'
-  | 'reschedulecollection'
-  | 'readyforcollection'
-  | 'collected'
-  | 'refund'
-  | 'notcollected'
-  | 'itemsreplaced'
-  | 'itemsrejected'
+  | 'AwaitingPrep'
+  | 'Preparing'
+  | 'ReadyForDelivery'
+  | 'OutForDelivery'
+  | 'CouldNotDeliver'
+  | 'Delivered'
+  | 'ReadyForCollection'
+  | 'Collected'
+  | 'NoCollection'
+  | 'PartialRefund'
 > = {
   transitions: {
-    awaitingprep: { to: ['Cancelled', 'preparing'], mergeStrategy: 'replace' },
-    preparing: {
-      to: ['readyfordelivery', 'readyforcollection'],
+    PaymentSettled: { to: ['AwaitingPrep'], mergeStrategy: 'replace' },
+    AwaitingPrep: {
+      to: ['PartialRefund', 'Preparing'],
       mergeStrategy: 'replace',
     },
-    readyforcollection: {
-      to: ['collected', 'notcollected', 'itemsrejected', 'reschedulecollection'],
+    Preparing: {
+      to: ['ReadyForDelivery', 'ReadyForCollection'],
       mergeStrategy: 'replace',
     },
-    reschedulecollection: {
-      to: ['collected', 'notcollected'],
+    ReadyForDelivery: {
+      to: ['OutForDelivery'],
       mergeStrategy: 'replace',
     },
-    collected: { to: ['partialrefund'], mergeStrategy: 'replace' },
-    notcollected: {
-      to: ['reschedulecollection', 'itemsreplaced', 'refund'],
+    OutForDelivery: {
+      to: ['Delivered', 'CouldNotDeliver'],
       mergeStrategy: 'replace',
     },
-    itemsreplaced: { to: ['refund'], mergeStrategy: 'replace' },
-    readyfordelivery: {
-      to: ['outfordelivery', 'itemsrejected'],
+    Delivered: { to: ['PartialRefund'], mergeStrategy: 'replace' },
+    CouldNotDeliver: {
+      to: ['ReadyForDelivery', 'PartialRefund'],
       mergeStrategy: 'replace',
     },
-    outfordelivery: {
-      to: ['orderdelivered', 'rescheduledelivery', 'notdelivered'],
+    ReadyForCollection: {
+      to: ['Collected', 'NoCollection'],
       mergeStrategy: 'replace',
     },
-    notdelivered: {
-      to: ['rescheduledelivery', 'itemsreplaced', 'refund'],
+    Collected: { to: ['PartialRefund'], mergeStrategy: 'replace' },
+    NoCollection: {
+      to: ['ReadyForCollection', 'PartialRefund'],
       mergeStrategy: 'replace',
     },
-    refund: { to: ['Cancelled'], mergeStrategy: 'replace' },
-    Cancelled: { to: [], mergeStrategy: 'replace' },
-    orderdelivered: { to: ['partialrefund'], mergeStrategy: 'replace' },
-    partialrefund: { to: [], mergeStrategy: 'replace' },
-    rescheduledelivery: { to: ['readyfordelivery'], mergeStrategy: 'replace' },
-    itemsrejected: {
-      to: ['readyforcollection', 'readyfordelivery'],
-      mergeStrategy: 'replace',
-    },
+    PartialRefund: { to: [], mergeStrategy: 'replace' },
   },
 };
 
