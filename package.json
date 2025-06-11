@@ -1,6 +1,6 @@
 {
   "name": "vendure-fulfillment-plugin",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "author": "thecoolemail",
   "repository": "git@github.com:thecooolemail/vendure-fulfillment-plugin.git",
   "license": "MIT",
