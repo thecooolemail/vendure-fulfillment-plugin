@@ -16,19 +16,19 @@ import { tasksAndOrders } from './constants';
     schema: adminApiExtensions,
     resolvers: [TasksResolver],
   },
-  configuration: config => {
+  configuration: (config) => {
     config.customFields.Channel.push(
       { name: 'Logitude', type: 'string' },
       { name: 'Latitude', type: 'string' },
       { name: 'Address', type: 'string' },
       { name: 'Hours', type: 'string' },
       { name: 'Phone', type: 'string' },
-      { name: 'google_place_id', type: 'string' },
+      { name: 'google_place_id', type: 'string' }
     );
     config.customFields.Address.push(
       { name: 'Place_id', type: 'string' },
       { name: 'Long', type: 'string' },
-      { name: 'Lat', type: 'string' },
+      { name: 'Lat', type: 'string' }
     );
     config.customFields.Order.push(
       { name: 'Is_Delivery', type: 'boolean', defaultValue: false },
@@ -37,7 +37,7 @@ import { tasksAndOrders } from './constants';
       { name: 'Order_Note', type: 'string' },
       { name: 'Reschedule_Reason', type: 'string' },
       { name: 'Review', type: 'int' },
-      { name: 'google_place_id', type: 'string' },
+      { name: 'google_place_id', type: 'string' }
     );
     config.authOptions.customPermissions.push(tasksAndOrders);
 

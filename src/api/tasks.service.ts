@@ -1,10 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  Order,
-  OrderState,
-  RequestContext,
-  TransactionalConnection,
-} from '@vendure/core';
+import { Order, OrderState, RequestContext, TransactionalConnection } from '@vendure/core';
 import dayjs from 'dayjs';
 import { Between, FindOperator, In, LessThanOrEqual } from 'typeorm';
 import { SubstitutionStates } from 'vendure-substitution-plugin';
@@ -33,9 +28,7 @@ export class TasksService {
       this.getSubItemRejectedDeliveredOrders,
     ];
 
-    const allTasks = await Promise.all(
-      taskGroups.map((task) => task.call(this, ctx))
-    );
+    const allTasks = await Promise.all(taskGroups.map(task => task.call(this, ctx)));
     return allTasks.flat();
   }
 
@@ -44,7 +37,7 @@ export class TasksService {
     dateFilter,
     stateFilter,
     taskTemplate,
-    isDelivery = false,
+    isDelivery,
   }: {
     ctx: RequestContext;
     dateFilter?: FindOperator<Date>;
@@ -66,98 +59,56 @@ export class TasksService {
     return this.fetchAndFormatTasks({
       ctx,
       dateFilter: Between(
-        dayjs().add(1, 'day').startOf('day').toDate(),
-        dayjs().add(1, 'day').endOf('day').toDate()
+        // orders with time till delivery/collection < 8 hours is handled in getPrepareToday
+        dayjs().add(8, 'hours').toDate(),
+        dayjs().add(24, 'hour').add(1, 'minute').toDate(),
       ),
       stateFilter: 'AwaitingPrep',
-      taskTemplate: (order) =>
-        this.createTask(
-          order,
-          `Prepare`,
-          'for tomorrow',
-          'Low Priority',
-          'success'
-        ),
+      taskTemplate: order => this.createTask(order, `Prepare`, 'for tomorrow', 'Low Priority', 'success'),
     });
   }
 
   async getPrepareToday(ctx: RequestContext): Promise<TaskMessage[]> {
-    const now = dayjs();
-    const in8Hours = now.add(8, 'hours');
-    const endOfDay = now.endOf('day');
-
-    // minimum of in8Hours or endOfDay
-    const upperLimit = in8Hours.isBefore(endOfDay) ? in8Hours : endOfDay;
-
     return this.fetchAndFormatTasks({
       ctx,
-      dateFilter: Between(now.toDate(), upperLimit.toDate()),
+      dateFilter: Between(dayjs().toDate(), dayjs().add(8, 'hours').toDate()),
       stateFilter: 'AwaitingPrep',
-      taskTemplate: (order) =>
-        this.createTask(
-          order,
-          `Prepare`,
-          'for today',
-          'High Priority',
-          'error'
-        ),
+      taskTemplate: order => this.createTask(order, `Prepare`, 'for today', 'High Priority', 'error'),
     });
   }
 
   // Ready For Collection
-  async getReadyForCollectionOrders(
-    ctx: RequestContext
-  ): Promise<TaskMessage[]> {
+  async getReadyForCollectionOrders(ctx: RequestContext): Promise<TaskMessage[]> {
     return this.fetchAndFormatTasks({
       ctx,
-      dateFilter: Between(
-        dayjs().startOf('day').toDate(),
-        dayjs().endOf('day').toDate()
-      ),
+      dateFilter: Between(dayjs().startOf('day').toDate(), dayjs().endOf('day').toDate()),
       stateFilter: 'ReadyForCollection',
-      taskTemplate: (order) =>
-        this.createTask(
-          order,
-          '',
-          'will be collected today',
-          'Low Priority',
-          'success'
-        ),
+      taskTemplate: order => this.createTask(order, '', 'will be collected today', 'Low Priority', 'success'),
     });
   }
 
-  async getReadyForCollectionOrdersPast24h(
-    ctx: RequestContext
-  ): Promise<TaskMessage[]> {
+  async getReadyForCollectionOrdersPast24h(ctx: RequestContext): Promise<TaskMessage[]> {
     return this.fetchAndFormatTasks({
       ctx,
       dateFilter: LessThanOrEqual(dayjs().subtract(1, 'days').toDate()),
       stateFilter: 'ReadyForCollection',
-      taskTemplate: (order) =>
-        this.createTask(
-          order,
-          'No collection',
-          ', call customer',
-          'Medium Priority',
-          'success'
-        ),
+      taskTemplate: order =>
+        this.createTask(order, 'No collection', ', call customer', 'Medium Priority', 'success'),
     });
   }
 
-  async getReadyForCollectionOrdersPast48h(
-    ctx: RequestContext
-  ): Promise<TaskMessage[]> {
+  async getReadyForCollectionOrdersPast48h(ctx: RequestContext): Promise<TaskMessage[]> {
     return this.fetchAndFormatTasks({
       ctx,
       dateFilter: LessThanOrEqual(dayjs().subtract(2, 'days').toDate()),
       stateFilter: 'ReadyForCollection',
-      taskTemplate: (order) =>
+      taskTemplate: order =>
         this.createTask(
           order,
           'No collection',
           ', if cant reach customer, change to No Collection',
           'Medium Priority',
-          'success'
+          'success',
         ),
     });
   }
@@ -168,45 +119,25 @@ export class TasksService {
       ctx,
       dateFilter: LessThanOrEqual(dayjs().toDate()),
       stateFilter: 'NoCollection',
-      taskTemplate: (order) =>
-        this.createTask(
-          order,
-          'Refund order',
-          ', and place items back',
-          'Medium Priority',
-          'success'
-        ),
+      taskTemplate: order =>
+        this.createTask(order, 'Refund order', ', and place items back', 'Medium Priority', 'success'),
       isDelivery: true,
     });
   }
 
   // Ready For Delivery
-  async getPreparedAndNotOutForDeliveryForToday(
-    ctx: RequestContext
-  ): Promise<TaskMessage[]> {
+  async getPreparedAndNotOutForDeliveryForToday(ctx: RequestContext): Promise<TaskMessage[]> {
     return this.fetchAndFormatTasks({
       ctx,
-      dateFilter: Between(
-        dayjs().startOf('day').toDate(),
-        dayjs().endOf('day').toDate()
-      ),
+      dateFilter: Between(dayjs().startOf('day').toDate(), dayjs().endOf('day').toDate()),
       stateFilter: 'ReadyForDelivery',
-      taskTemplate: (order) =>
-        this.createTask(
-          order,
-          'Send',
-          'out for delivery',
-          'Medium Priority',
-          'success'
-        ),
+      taskTemplate: order => this.createTask(order, 'Send', 'out for delivery', 'Medium Priority', 'success'),
       isDelivery: true,
     });
   }
 
   // Out For Delivery
-  async getAnyOutForDeliveryOrders(
-    ctx: RequestContext
-  ): Promise<TaskMessage[]> {
+  async getAnyOutForDeliveryOrders(ctx: RequestContext): Promise<TaskMessage[]> {
     return this.fetchAndFormatTasks({
       ctx,
       // dateFilter: Between(
@@ -214,14 +145,7 @@ export class TasksService {
       //   dayjs().endOf('day').toDate()
       // ),
       stateFilter: 'OutForDelivery',
-      taskTemplate: (order) =>
-        this.createTask(
-          order,
-          'Finish delivery',
-          '',
-          'Medium Priority',
-          'success'
-        ),
+      taskTemplate: order => this.createTask(order, 'Finish delivery', '', 'Medium Priority', 'success'),
       isDelivery: true,
     });
   }
@@ -232,44 +156,42 @@ export class TasksService {
       ctx,
       dateFilter: LessThanOrEqual(dayjs().toDate()),
       stateFilter: 'CouldNotDeliver',
-      taskTemplate: (order) =>
+      taskTemplate: order =>
         this.createTask(
           order,
           'Place order in warehoust',
           ', Call Customer, Reschedule and change delivery date and set ready for delivery',
           'Medium Priority',
-          'success'
+          'success',
         ),
       isDelivery: true,
     });
   }
 
   // Collected / Delivered
-  async getSubItemRejectedDeliveredOrders(
-    ctx: RequestContext
-  ): Promise<TaskMessage[]> {
+  async getSubItemRejectedDeliveredOrders(ctx: RequestContext): Promise<TaskMessage[]> {
     const orders = await this.getFilteredOrders({
       ctx,
       dateFilter: LessThanOrEqual(dayjs().endOf('day').toDate()),
       stateFilter: In(['Delivered', 'Collected']),
     });
 
-    const filtered = orders.filter((order) =>
-      order.lines.some((line) =>
+    const filtered = orders.filter(order =>
+      order.lines.some(line =>
         [SubstitutionStates.REMOVED, SubstitutionStates.REJECTED].includes(
-          line.customFields?.substitutionState
-        )
-      )
+          line.customFields?.substitutionState,
+        ),
+      ),
     );
 
-    return filtered.map((order) =>
+    return filtered.map(order =>
       this.createTask(
         order,
         'Refund Rejected Substitution Items',
         'through partial refund',
         'Low Priority',
-        'success'
-      )
+        'success',
+      ),
     );
   }
 
@@ -310,18 +232,13 @@ export class TasksService {
           'PaymentAuthorized',
           'PaymentSettled',
           'Shipped',
-          // 'Delivered',
-          // 'Cancelled',
         ] as OrderState[],
       })
       .getMany();
   }
 
   private getLink(order: Order): string {
-    const href =
-      order.state === 'Draft'
-        ? `/admin/orders/draft/${order.id}`
-        : `/admin/orders/${order.id}`;
+    const href = order.state === 'Draft' ? `/admin/orders/draft/${order.id}` : `/admin/orders/${order.id}`;
     return `<a class="button-ghost" href="${href}">
               <span>${order.code}</span>
               <clr-icon shape="arrow right" role="none">
@@ -337,7 +254,7 @@ export class TasksService {
     prefix: string,
     suffix: string,
     tag: string,
-    colorType: string
+    colorType: string,
   ): TaskMessage {
     return {
       taskName: `${prefix} ${this.getLink(order)} ${suffix}`.trim(),
